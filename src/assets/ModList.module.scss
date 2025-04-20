@@ -1,0 +1,283 @@
+.modList {
+    padding: 1rem;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.controls {
+    height: 70px;
+    background-color: rgba(51, 51, 51, 0.25);
+    backdrop-filter: blur(3px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.controlsGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.searchContainer {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 8px 35px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+
+    &:focus {
+        outline: none;
+        border-color: #666;
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    &::placeholder {
+        color: #666;
+    }
+}
+
+.sortControls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sortButton {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    &.active {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: #666;
+    }
+}
+
+.sortOrderButton {
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+.previewType {
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.previewButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 8px 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    background: transparent ;
+    border-radius: 20px;
+   
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    &.active {
+        background: #121212;
+        color: #fff;
+    }
+}
+
+.modsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.modCard {
+    background: rgba(26, 26, 26, 0.8);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: #ff4444;
+    }
+}
+
+.modImage {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #222;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.noImage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.modInfo {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modName {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.category {
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 68, 68, 0.2);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #ff4444;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actionButton {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: rgba(255, 68, 68, 0.2);
+        border-color: rgba(255, 68, 68, 0.5);
+    }
+}
+
+.details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.verified {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4CAF50;
+    font-size: 0.9rem;
+}
+
+.verifiedIcon {
+    font-size: 1.2rem;
+}
+
+.downloadButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 68, 68, 0.2);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgba(255, 68, 68, 0.3);
+    }
+}
+
+.metaInfo {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.8rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filters {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+} 
