@@ -12,7 +12,7 @@ const LeftSidebar: React.FC = () => {
     return (
         <div className={styles.sidebar}>
             <nav className={styles.nav}>
-                <a href="/" style={{backgroundColor: '#1f1f1f'}} className={styles.navItem}>
+                <a href="/your-mods" style={{backgroundColor: '#1f1f1f'}} className={styles.navItem}>
                     <span>ваши моды</span>
                 </a>
                 <a href="/reviews" style={{backgroundColor: '#1f1f1f'}} className={styles.navItem}>

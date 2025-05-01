@@ -1,14 +1,14 @@
 .header {
     position: fixed;
-    margin-top: 10px;
     top: 0;
     left: 0;
     right: 0;
-    height: 60px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
+    background-color: #242424;
     z-index: 100;
 }
 
@@ -71,24 +71,46 @@
 }
 
 .profileIcon {
-    width: 32px;
-    height: 32px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background-color: rgba(255, 68, 68, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-}
+    transition: all 0.3s ease;
 
+    &:hover {
+        background-color: rgba(255, 68, 68, 0.9);
+        box-shadow: 
+            0 0 10px rgba(255, 68, 68, 0.6), // Неоновое свечение фона
+            0 0 20px rgba(255, 68, 68, 0.3);
+        transform: scale(1.05);
+    }
+}
 .crownIcon {
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.3rem;
     border-radius: 50%;
     background-color: rgba(255, 68, 68, 0.8);
+    color: black;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-}
+    transition: all 0.3s ease;
 
+    svg {
+        transition: all 0.3s ease;
+    }
+
+    &:hover {
+        color: yellow;
+        svg {
+            filter: drop-shadow(0 0 8px yellow); // Неоновое свечение значка
+            transform: scale(1.1);
+        }
+    }
+}

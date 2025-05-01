@@ -10,6 +10,14 @@ export interface IModCard {
         _id: string;
         name: string;
       }>;
-      downloads?: number; 
+      rating: {
+        like: number;
+        dislike: number;
+        downloads: number;
+      };
+      size: string;
+      isVisibleDiscord: boolean;
+      discord:string;
+      createdAt?: Date | string;
     }
   }

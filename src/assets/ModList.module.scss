@@ -3,131 +3,245 @@
     height: 100%;
     overflow-y: auto;
 }
-
 .controls {
     height: 70px;
     background-color: rgba(51, 51, 51, 0.25);
-    backdrop-filter: blur(3px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    outline: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.05) inset;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    gap: 1rem;
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+    }
 }
 
 .controlsGroup {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    width: 100%;
 }
 
 .searchContainer {
     position: relative;
     flex: 1;
-    max-width: 300px;
-}
+    min-width: 200px;
+    max-width: 400px;
+    margin-right: 25px;
 
-.searchIcon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-}
-
-.searchInput {
-    width: 100%;
-    padding: 8px 35px;
-    border-radius: 20px;
-    border: 1px solid #444;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    font-size: 14px;
-    transition: all 0.3s ease;
-
-    &:focus {
-        outline: none;
-        border-color: #666;
-        background: rgba(255, 255, 255, 0.15);
+    .searchIcon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
     }
 
-    &::placeholder {
-        color: #666;
-    }
-}
-
-.sortControls {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.sortButton {
-    padding: 8px 12px;
-    border-radius: 20px;
-    border: 1px solid #444;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.15);
-    }
-
-    &.active {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: #666;
-    }
-}
-
-.sortOrderButton {
-    padding: 8px;
-    border-radius: 20px;
-    border: 1px solid #444;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.15);
-    }
-}
-
-.previewType {
-    display: flex;
-    align-items: center;
-    border-radius: 20px;
-    border: 1px solid #444;
-    background: rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-}
-
-.previewButton {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 8px 12px;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    background: transparent ;
-    border-radius: 20px;
-   
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.15);
-    }
-
-    &.active {
-        background: #121212;
+    .searchInput {
+        width: 100%;
+        padding: 10px 20px 10px 40px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(31, 31, 31, 0.8);
         color: #fff;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+
+        &:focus {
+            outline: none;
+            border-color: rgba(255, 68, 68, 0.5);
+            box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1);
+            
+            ~ .searchIcon {
+                color: #ff4444;
+            }
+        }
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+    }
+}
+
+.sortContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    .sortLabel {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .sortGroup {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: rgba(31, 31, 31, 0.8);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+
+    .sortSelect {
+        appearance: none;
+        background: transparent;
+        border: none;
+        padding: 10px 36px 10px 14px;
+        color: #fff;
+        font-size: 0.9rem;
+        cursor: pointer;
+        min-width: 160px;
+        outline: none;
+        z-index: 1;
+
+        option {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+    }
+
+    .sortDirection {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s ease;
+        height: 100%;
+        z-index: 1;
+
+        &:hover {
+            color: #ff4444;
+            transform: scale(1.1);
+        }
+
+        svg {
+            font-size: 1rem;
+        }
+    }
+
+    /* Кастомная стрелка для select */
+    &::after {
+        content: "▼";
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.6rem;
+        pointer-events: none;
+    }
+}
+.previewType {
+    margin-left: 45px;
+    display: flex;
+    border-radius: 25px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(31, 31, 31, 0.8);
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    padding: 2px; 
+    position: relative; /* Для псевдоэлемента */
+
+    /* Анимированный белый фон для активной кнопки */
+    &::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: calc(50% - 3px);
+        height: calc(100% - 6px);
+        background: white;
+        border-radius: 22px; /* На 3px меньше, чем у родителя из-за padding */
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 0;
+    }
+
+    /* Сдвигаем фон для второй кнопки */
+    &.videoActive::after {
+        transform: translateX(100%);
+    }
+
+    .previewButton {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 8px 14px;
+        color: rgba(255, 255, 255, 0.8);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 25px;
+        background: transparent;
+        font-size: 0.85rem;
+        position: relative;
+        z-index: 1; /* Чтобы текст был поверх белого фона */
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        &.active {
+            color: #000000;
+        }
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .controls {
+        height: auto;
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .controlsGroup {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .searchContainer {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .sortContainer {
+        width: 100%;
+        
+        .sortGroup {
+            width: 100%;
+        }
+        
+        .sortSelect {
+            width: 100%;
+        }
     }
 }
 

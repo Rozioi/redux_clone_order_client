@@ -14,8 +14,8 @@ const SnowBackground: React.FC = () => {
             <Snowfall 
                 snowflakeCount={100}
                 radius={[0.5, 3.0]}
-                speed={[1, 1]}
-                wind={[-0.5, 2]}
+                speed={[0, 0.2]}
+                wind={[-0.5, 0.1]}
                 color="#fff"
                 style={{
                     position: 'fixed',
