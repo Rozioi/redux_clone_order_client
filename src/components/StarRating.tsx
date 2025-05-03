@@ -1,4 +1,3 @@
-// StarRating.tsx
 import { useState } from "react";
 import styles from "../assets/Reviews.module.scss";
 

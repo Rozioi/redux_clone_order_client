@@ -33,7 +33,6 @@ const ModList: React.FC<ModListProps> = ({ mods = testMods }) => {
           ? downloadsA - downloadsB
           : downloadsB - downloadsA;
       } else {
-        // Безопасная сортировка по дате с проверкой наличия createdAt
         const dateA = a.mod.createdAt ? new Date(a.mod.createdAt).getTime() : 0;
         const dateB = b.mod.createdAt ? new Date(b.mod.createdAt).getTime() : 0;
         return sortOrder === "asc" ? dateA - dateB : dateB - dateA;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styles from '../assets/LeftSidebar.module.scss';
-import { FaHome, FaComment } from 'react-icons/fa';
 
 const LeftSidebar: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
