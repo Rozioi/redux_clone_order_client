@@ -125,8 +125,13 @@ const ModDetail: React.FC<ModProps> = ({ mods = testMods }) => {
             По приказу
             <FaShare />
           </button>
+          <div className={styles.password}> 
+            <p>Пароль от архива</p>
+            <p>reduxhub</p>
+          </div>
         </div>
       </div>
+      
       <Notification 
         message="Ссылка скопирована!" 
         show={showNotification} 

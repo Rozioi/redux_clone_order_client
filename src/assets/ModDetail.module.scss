@@ -24,7 +24,7 @@
 .content {
   flex: 1;
   background: rgba(51, 51, 51, 0.6);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
@@ -245,6 +245,86 @@
   }
 }
 
+.password {
+    padding: 0.6rem 1.5rem;
+    max-height: 40px;
+    /* background: linear-gradient(
+        145deg,
+        rgba(51, 51, 51, 0.7),
+        rgba(31, 31, 31, 0.5)
+    ); */
+    backdrop-filter: blur(12px) saturate(180%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(31, 31, 31, 0.8);
+    color: #fff;
+    
+    cursor: pointer;
+    transition: 
+        transform 0.3s ease,
+        background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Эффект свечения при наведении */
+.password:hover {
+    background: linear-gradient(
+        145deg,
+        rgba(51, 51, 51, 0.9),
+        rgba(31, 31, 31, 0.7)
+    );
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 40px rgba(0, 0, 0, 0.2),
+        0 0 30px rgba(255, 255, 255, 0.15) inset,
+        0 0 25px rgba(87, 154, 255, 0.3);
+}
+
+/* Анимация "блеска" */
+/* .password::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 75%
+    );
+    animation: shine 4s infinite linear;
+    opacity: 0.3;
+} */
+
+@keyframes shine {
+    0% { transform: translateX(-50%) rotate(45deg); }
+    100% { transform: translateX(150%) rotate(45deg); }
+}
+
+.password p {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    font-size: 0.7rem;
+}
+.password p:last-child {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    color: #6cffa7;
+    filter: drop-shadow(0 0 8px rgba(108, 255, 167, 0.3));
+    font-size: 0.8rem;
+    transition: color 0.3s ease;
+    
+}
+
+.password:hover p:last-child {
+    color: #8affc1;
+}
 .shareButton {
   width: 180px;
   padding: 0.8rem 1.5rem;
