@@ -69,6 +69,7 @@ const AppContent: React.FC = () => {
             <Route path="/404" element={<div>404 Not Found</div>} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
+        
         </Suspense>
       </main>
     </div>

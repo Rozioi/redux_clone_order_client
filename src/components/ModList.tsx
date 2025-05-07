@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import styles from "../assets/ModList.module.scss";
 import {
   FaSortAmountDown,
@@ -10,7 +10,6 @@ import {
 import { testMods } from "../mocks/testMods";
 import { IModCard } from "../interfaces/mod.interface";
 import ModCard from "./ModCard";
-
 interface ModListProps {
   mods?: IModCard[];
 }
@@ -112,11 +111,11 @@ const ModList: React.FC<ModListProps> = ({ mods = testMods }) => {
         </div>
       </div>
 
-      <div className={styles.modsGrid}>
-        {sortedMods.map((mod) => (
-          <ModCard key={mod.mod._id} mod={mod} showVideo={showVideo} />
-        ))}
-      </div>
+     <div className={styles.modsGrid}>
+       {sortedMods.map((mod) => (
+         <ModCard key={mod.mod._id} mod={mod} showVideo={showVideo} />
+       ))}
+     </div>
     </div>
   );
 };

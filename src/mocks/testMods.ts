@@ -16,6 +16,7 @@ export const testMods: IModCard[] = [
                 downloads: 12500
             },
             size: '8.66GB',
+            archivePassword: 'reduxhub',
             isVisibleDiscord: true,
             discord: "rozioi",
             categories: [
@@ -38,6 +39,7 @@ export const testMods: IModCard[] = [
                 downloads: 8700
             },
             size: '1.66GB',
+            archivePassword: 'red1xhub',
             isVisibleDiscord: false,
             discord: "rozioi",
             categories: [
@@ -106,6 +108,7 @@ export const testMods: IModCard[] = [
                 downloads: 5300
             },
             size: '18.66GB',
+            archivePassword: 'rozioi',
             isVisibleDiscord: true,
             discord: "rozioi",
             categories: [

@@ -18,6 +18,7 @@ export interface IModCard {
       size: string;
       isVisibleDiscord: boolean;
       discord:string;
+      archivePassword?: string;
       createdAt?: Date | string;
     }
   }

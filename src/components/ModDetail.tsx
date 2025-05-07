@@ -15,6 +15,7 @@ interface ModProps {
 const ModDetail: React.FC<ModProps> = ({ mods = testMods }) => {
   const { id } = useParams<{ id: string }>();
   const [mod, setMod] = useState<IModCard | undefined>();
+  const [notificationMessage, setNotificationMessage] = useState<string>('');
   const [showNotification, setShowNotification] = useState(false);
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ const ModDetail: React.FC<ModProps> = ({ mods = testMods }) => {
   };
 
   const handleShare = () => {
+    setNotificationMessage("Ссылка скопирована!");
     if (mod?.mod._id) {
       copyUrl(mod.mod._id, "/mod/");
       setShowNotification(true);
@@ -125,15 +127,22 @@ const ModDetail: React.FC<ModProps> = ({ mods = testMods }) => {
             По приказу
             <FaShare />
           </button>
-          <div className={styles.password}> 
-            <p>Пароль от архива</p>
-            <p>reduxhub</p>
-          </div>
+          {mod.mod.archivePassword && <div onClick={(event: React.MouseEvent<HTMLDivElement>) => {
+            setNotificationMessage("Пароль скопирован!");
+            if (mod.mod.archivePassword){
+              copyClipboard(mod.mod.archivePassword);
+              setShowNotification(true);
+            }
+            
+          }} className={styles.password}> 
+            <p>Пароль от архива:</p>
+            <p>{mod.mod.archivePassword}</p>
+          </div>}
         </div>
       </div>
       
       <Notification 
-        message="Ссылка скопирована!" 
+        message={notificationMessage}
         show={showNotification} 
         onHide={() => setShowNotification(false)} 
       />
