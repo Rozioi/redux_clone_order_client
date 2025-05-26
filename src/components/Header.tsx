@@ -1,4 +1,5 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "../assets/Header.module.scss";
 import {
   FaYoutube,
@@ -7,15 +8,27 @@ import {
   FaUser,
   FaCrown,
 } from "react-icons/fa";
-import LoginButton from "./LoginButton";
+import LoginButton from "../components/auth/LoginButton";
+import { useAuth } from "../context/AuthContext";
 
 const Header: React.FC = () => {
+  const {  isAuthenticated,user ,isAdmin} = useAuth();
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    if (user) {
+      navigate('/profile');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <a href="/" className={styles.logo}>
+        <Link to="/" className={styles.logo}>
           <img src="/assets/reduxhub7.svg" alt="Logo" />
-        </a>
+        </Link>
 
         <div className={styles.socialIcons}>
           <a
@@ -47,12 +60,18 @@ const Header: React.FC = () => {
 
       <div className={styles.rightSection}>
         <LoginButton />
-        <div className={styles.profileIcon}>
-          <FaUser />
+        <div 
+          className={`${styles.profileIcon} ${user ? styles.active : ''}`}
+          onClick={handleProfileClick}
+          title={user ? "Профиль" : "Войти"}
+        >
+          {isAuthenticated ? <img src="avatar.jpeg"/> : <FaUser />}
         </div>
-        <div className={styles.crownIcon}>
-          <FaCrown />
-        </div>
+        {isAdmin && (
+          <Link to="/admin" className={styles.crownIcon} title="Админ панель">
+            <FaCrown />
+          </Link>
+        )}
       </div>
     </header>
   );

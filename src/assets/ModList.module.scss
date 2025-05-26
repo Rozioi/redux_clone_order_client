@@ -2,6 +2,7 @@
     padding: 1rem;
     height: 100%;
     overflow-y: auto;
+    top: 90px;
 }
 .controls {
     height: 70px;
@@ -250,7 +251,7 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
-
+/* 
 .modCard {
     background: rgba(26, 26, 26, 0.8);
     border-radius: 12px;
@@ -394,4 +395,4 @@
     backdrop-filter: blur(10px);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-} 
+}  */

@@ -11,6 +11,7 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.113",
     "axios": "^1.9.0",
+    "clsx": "^2.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^4.10.1",

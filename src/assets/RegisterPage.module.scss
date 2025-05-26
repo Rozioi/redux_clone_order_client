@@ -1,3 +1,105 @@
+.registerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.registerForm {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+    h1 {
+        color: #fff;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+
+    label {
+        display: block;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:focus {
+            outline: none;
+            border-color: #ff4757;
+            background: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+.submitButton {
+    width: 100%;
+    padding: 0.75rem;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: #ff6b81;
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        background: #666;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+
+.error {
+    background: rgba(255, 71, 87, 0.1);
+    color: #ff4757;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.links {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+
+    a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: #ff4757;
+        }
+    }
+}
+
 .authContainer {
     display: flex;
     justify-content: center;
@@ -11,6 +113,20 @@
     padding: 2rem;
 }
 
+.switchButton {
+    padding: 0.75rem;
+    background: none;
+    color: rgba(255, 68, 68, 0.8);
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  
+    &:hover {
+      color: #ff4444;
+      text-decoration: underline;
+    }
+  }
 .main {
     width: 100%;
     max-width: 420px;
@@ -162,11 +278,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0.05),
-                transparent
-            );
+            background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent);
             transform: translateX(-100%);
             transition: transform 0.4s ease;
             z-index: 1;
@@ -178,11 +290,7 @@
             &:hover {
                 background: rgba(255, 68, 68, 0.3);
                 .buttonHoverEffect {
-                    background: linear-gradient(
-                        90deg,
-                        rgba(255, 68, 68, 0.2),
-                        transparent
-                    );
+                    background: linear-gradient(90deg, rgba(255,68,68,0.2), transparent);
                 }
             }
         }

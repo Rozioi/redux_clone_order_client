@@ -1,0 +1,226 @@
+.profileContainer {
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 12px;
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #e0e0e0;
+  }
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.5rem;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.avatarWrapper {
+  .avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+    object-fit: cover;
+  }
+}
+
+.subscriptionStatus {
+  background: rgba(40, 40, 40, 0.8);
+  padding: 1rem;
+  border-radius: 8px;
+
+  h3 {
+    font-size: 1.1rem;
+    margin: 0 0 0.8rem 0;
+    color: #fff;
+  }
+}
+
+.subscriptionBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+
+  .badgePro {
+    background: #4CAF50;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  span {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+  }
+}
+
+.subscriptionBenefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: center;
+
+    &::before {
+      content: '✓';
+      color: #4CAF50;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.userStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statItem {
+  background: rgba(50, 50, 50, 0.6);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+
+  .statValue {
+    font-size: 1.4rem;
+    color: #fff;
+    display: block;
+    font-weight: bold;
+  }
+
+  .statLabel {
+    font-size: 0.8rem;
+    color: #a0a0a0;
+    text-transform: uppercase;
+  }
+}
+
+.modsSection {
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h2 {
+      font-size: 1.3rem;
+      margin: 0;
+      color: #fff;
+    }
+  }
+}
+
+.compactModsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.compactModCard {
+  display: flex;
+  align-items: center;
+  background: rgba(50, 50, 50, 0.6);
+  padding: 0.8rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(60, 60, 60, 0.7);
+  }
+
+  .modThumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-right: 1rem;
+  }
+
+  .modInfo {
+    flex: 1;
+
+    h3 {
+      font-size: 1rem;
+      margin: 0 0 0.3rem 0;
+      color: #fff;
+    }
+
+    .metaInfo {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: #a0a0a0;
+
+      .status {
+        color: #4CAF50;
+      }
+    }
+  }
+
+  .downloadLink {
+    color: #2196F3;
+    padding: 0.5rem;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.createButton {
+  background: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #45a049;
+  }
+}
+
+.logoutButton {
+  background: transparent;
+  color: #ff4757;
+  border: 1px solid #ff4757;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255,71,87,0.1);
+  }
+}

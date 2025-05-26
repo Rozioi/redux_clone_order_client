@@ -1,10 +1,12 @@
 import React from "react";
 import { FaSignInAlt, FaDiscord, FaTelegram } from "react-icons/fa";
-import { TelegramUser } from "../@types/telegram";
-import styles from "../assets/LoginPage.module.scss";
-import TelegramLoginWidget from "./TelegramLoginWidget";
+import { useNavigate } from "react-router-dom";
+import { TelegramUser } from "../../@types/telegram";
+import styles from "../../assets/LoginPage.module.scss";
+import TelegramLoginWidget from "../TelegramLoginWidget";
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className={styles.loginContainer}>
       <div className={styles.main}>
@@ -17,6 +19,7 @@ const LoginPage: React.FC = () => {
           <button
             className={`${styles.authButton} ${styles.primary}`}
             aria-label="Войти по логину"
+            onClick={() => navigate('/login')}
           >
             <FaSignInAlt className={styles.authIcon} />
             <span>Войти по логину</span>
