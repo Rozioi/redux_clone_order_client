@@ -15,7 +15,6 @@ const EditMod: React.FC = () => {
   const [formData, setFormData] = useState<IModUpdate>({
     modName: '',
     description: '',
-    version: '',
     discord: '',
     isVisibleDiscord: true
   });
@@ -33,7 +32,6 @@ const EditMod: React.FC = () => {
         setFormData({
           modName: foundMod.modName,
           description: foundMod.description,
-          version: foundMod.version,
           discord: foundMod.discord,
           isVisibleDiscord: foundMod.isVisibleDiscord
         });
@@ -111,19 +109,6 @@ const EditMod: React.FC = () => {
             value={formData.description}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, description: e.target.value }))
-            }
-            required
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="version">Версия</label>
-          <input
-            type="text"
-            id="version"
-            value={formData.version}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, version: e.target.value }))
             }
             required
           />

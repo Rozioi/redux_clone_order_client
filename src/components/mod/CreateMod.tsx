@@ -8,70 +8,119 @@ import { useAuth } from '../../context/AuthContext';
 
 const CreateMod: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [parentCategories, setParentCategories] = useState<ICategory[]>([]);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [selectedParentId, setSelectedParentId] = useState<string>('');
+  const [selectedParentId, setSelectedParentId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  if (!user?._id){
+    navigate('/login');
+  }
   const [formData, setFormData] = useState<IModCreate>({
     modName: '',
     description: '',
-    version: '',
     categoryIds: [],
-    tags: [],
-    discord: '',
-    isVisibleDiscord: true
+    discord: '' ,
+    isVisibleDiscord: true,
+    previewLink: '',
+    youtubeLink: '',
+    userId: ''
   });
-  const { user } = useAuth();
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await ApiService.getCategories();
+        setCategories(data);
+        setParentCategories(data.filter(cat => !cat.parentId));
+      } catch (err) {
+        setError('Ошибка при загрузке категорий');
+      }
+    };
     fetchCategories();
   }, []);
 
   useEffect(() => {
-    if (selectedParentId) {
-      const subs = categories.filter(cat => cat.parentId === selectedParentId);
-      setSubCategories(subs);
-    } else {
-      setSubCategories([]);
-    }
+    setSubCategories(selectedParentId 
+      ? categories.filter(cat => cat.parentId === selectedParentId) 
+      : []);
   }, [selectedParentId, categories]);
 
-  const fetchCategories = async () => {
+  const getYoutubeThumbnail = (url: string): string => {
     try {
-      const data = await ApiService.getCategories();
-      setCategories(data);
-      // Фильтруем родительские категории (без parentId)
-      const parents = data.filter(cat => !cat.parentId);
-      setParentCategories(parents);
-    } catch (err) {
-      setError('Ошибка при загрузке категорий');
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) 
+        ? `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg` 
+        : '';
+    } catch {
+      return '';
     }
   };
 
-  const handleParentCategoryChange = (parentId: string) => {
-    setSelectedParentId(parentId);
+  const handlePreviewInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const isYoutubeLink = value.includes('youtube.com') || value.includes('youtu.be');
+    
+    setFormData(prev => {
+      if (isYoutubeLink) {
+        const thumbnail = getYoutubeThumbnail(value);
+        return {
+          ...prev,
+          youtubeLink: value,
+          previewLink: thumbnail || value // fallback на саму ссылку если thumbnail не получен
+        };
+      } else {
+        return {
+          ...prev,
+          previewLink: value,
+          youtubeLink: '' 
+        };
+      }
+    });
+  };
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setSelectedParentId(value);
+    setFormData(prev => ({ ...prev, categoryIds: [value] }));
+  };
+
+  const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
-      categoryIds: [parentId]
+      categoryIds: [selectedParentId, e.target.value]
     }));
   };
 
-  const handleSubCategoryChange = (subCategoryId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      categoryIds: [selectedParentId, subCategoryId]
-    }));
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    formData.userId = user?._id || '';
+    formData.discord = user?.username || formData.discord;
+    
+    // if ( !formData.youtubeLink) {
+    //   setError('Некорректная YouTube ссылка');
+    //   return;
+    // }
+    
+    if (!formData.previewLink) {
+      setError('Укажите YouTube ссылку или изображение для превью');
+      return;
+    }
+    if (!formData.userId){
+      setError('Войдите в свою учётную запись');
+      return;
+    }
     try {
       setLoading(true);
-      setError(null);
       await ApiService.createMod(formData);
-      navigate('/mods');
+      navigate('/');
     } catch (err) {
       setError('Ошибка при создании мода');
     } finally {
@@ -79,56 +128,30 @@ const CreateMod: React.FC = () => {
     }
   };
 
-  const removeTag = (tagToRemove: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }));
-  };
-
-  if (loading) {
-    return <div className={styles.loading}>Загрузка...</div>;
-  }
+  if (loading) return <div className={styles.loading}>Загрузка...</div>;
 
   return (
     <div className={styles.container}>
       <h1>Создание мода</h1>
       {error && <div className={styles.error}>{error}</div>}
+      
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
-          <label htmlFor="modName">Название мода</label>
+          <label>Название мода</label>
           <input
-            type="text"
-            id="modName"
+            name="modName"
             value={formData.modName}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, modName: e.target.value }))
-            }
+            onChange={handleInputChange}
             required
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="description">Описание</label>
+          <label>Описание</label>
           <textarea
-            id="description"
+            name="description"
             value={formData.description}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, description: e.target.value }))
-            }
-            required
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="version">Версия</label>
-          <input
-            type="text"
-            id="version"
-            value={formData.version}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, version: e.target.value }))
-            }
+            onChange={handleInputChange}
             required
           />
         </div>
@@ -138,28 +161,24 @@ const CreateMod: React.FC = () => {
           <div className={styles.categorySelect}>
             <select
               value={selectedParentId}
-              onChange={(e) => handleParentCategoryChange(e.target.value)}
+              onChange={handleCategoryChange}
               required
             >
-              <option value="">Выберите основную категорию</option>
-              {parentCategories.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
+              <option value="">Выберите категорию</option>
+              {parentCategories.map(c => (
+                <option key={c._id} value={c._id}>{c.name}</option>
               ))}
             </select>
 
             {subCategories.length > 0 && (
               <select
                 value={formData.categoryIds[1] || ''}
-                onChange={(e) => handleSubCategoryChange(e.target.value)}
+                onChange={handleSubCategoryChange}
                 required
               >
                 <option value="">Выберите подкатегорию</option>
-                {subCategories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
+                {subCategories.map(c => (
+                  <option key={c._id} value={c._id}>{c.name}</option>
                 ))}
               </select>
             )}
@@ -167,30 +186,12 @@ const CreateMod: React.FC = () => {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="tags">Теги (через запятую)</label>
+          <label>Discord</label>
           <input
-            type="text"
-            id="tags"
-            value={formData.tags.join(', ')}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                tags: e.target.value.split(',').map((tag) => tag.trim()),
-              }))
-            }
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="discord">Discord</label>
-          <input
-            type="text"
-            id="discord"
+            name="discord"
             value={formData.discord}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, discord: e.target.value }))
-            }
-            required
+            onChange={handleInputChange}
+            placeholder='Если оставите пустым то поставится юзернейм'
           />
         </div>
 
@@ -199,18 +200,54 @@ const CreateMod: React.FC = () => {
             <input
               type="checkbox"
               checked={formData.isVisibleDiscord}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  isVisibleDiscord: e.target.checked,
-                }))
-              }
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                isVisibleDiscord: e.target.checked
+              }))}
             />
             Показывать Discord
           </label>
         </div>
 
-        <button type="submit" className={styles.submitButton} disabled={loading}>
+        <div className={styles.formGroup}>
+          <label>Ссылка на превью (изображение или YouTube)</label>
+          <input
+            value={formData.previewLink || formData.youtubeLink}
+            onChange={handlePreviewInputChange}
+            placeholder="https://example.com/image.jpg или https://youtube.com/watch?v=..."
+          />
+          
+          {formData.youtubeLink ? (
+            <div className={styles.videoPreview}>
+              <iframe
+                width="300"
+                height="169"
+                src={`https://www.youtube.com/embed/${formData.youtubeLink.split('v=')[1]}`}
+                frameBorder="0"
+                allowFullScreen
+              />
+              {formData.previewLink && (
+                <img 
+                  src={formData.previewLink} 
+                  alt="YouTube preview" 
+                  className={styles.previewImg}
+                />
+              )}
+            </div>
+          ) : formData.previewLink ? (
+            <img 
+              src={formData.previewLink} 
+              alt="Mod preview" 
+              className={styles.previewImg}
+            />
+          ) : null}
+        </div>
+
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={loading}
+        >
           {loading ? 'Создание...' : 'Создать мод'}
         </button>
       </form>
@@ -218,4 +255,4 @@ const CreateMod: React.FC = () => {
   );
 };
 
-export default CreateMod; 
+export default CreateMod;

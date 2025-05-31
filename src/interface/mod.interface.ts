@@ -11,10 +11,7 @@ export interface IModCard {
   previewLink: string;
   fileLink: string;
   youtubeLink?: string; 
-  categories?: Array<{ 
-    _id: string;
-    name: string;
-  }>;
+  categories?: string[];
   rating: {
     like: number;
     dislike: number;
@@ -72,11 +69,8 @@ export interface IMod {
   isLocalState: boolean;
   localPreviewPath: string;
   localFilePath: string;
-  youtubeLink?: string; 
-  categories?: Array<{ 
-    _id: string;
-    name: string;
-  }>;
+  youtubeLink?: string;  
+  categories?: string[];
   rating: {
     like: number;
     dislike: number;
@@ -99,15 +93,14 @@ export interface IMod {
 export interface IModCreate {
   modName: string;
   description: string;
-  version: string;
   categoryIds: string[];
-  tags: string[];
   previewLink?: string;
   fileLink?: string;
   youtubeLink?: string;
   discord: string;
   isVisibleDiscord: boolean;
   archivePassword?: string;
+  userId: string;
 }
 
 export interface IModUpdate extends Partial<IModCreate> {}

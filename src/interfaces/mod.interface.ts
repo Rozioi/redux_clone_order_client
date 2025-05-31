@@ -5,10 +5,7 @@ export interface IModCard {
   previewLink: string;
   fileLink: string;
   youtubeLink?: string; 
-  categories?: Array<{ 
-    _id: string;
-    name: string;
-  }>;
+  categories?: string[];
   rating: {
     like: number;
     dislike: number;

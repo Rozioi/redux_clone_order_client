@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ApiService from '../services/api.service';
 import { IUserProfile } from '../interface/user.interface';
@@ -22,11 +22,14 @@ const Profile: React.FC = () => {
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [userMods, setUserMods] = useState<IMod[]>([]);
+  const { username } = useParams();
+  
 
   useEffect(() => {
+  
     const fetchProfile = async () => {
       try {
-        // Тестовые данные
+       
         const testProfile: IUserProfile = {
           _id: '1',
           username: 'TestUser',
@@ -38,7 +41,7 @@ const Profile: React.FC = () => {
           reviewsCount: 12,
           avatarUrl: 'avatar.jpeg'
         };
-
+        
         await new Promise(resolve => setTimeout(resolve, 500));
         setProfile(testProfile);
         setLoading(false);
@@ -101,7 +104,7 @@ const Profile: React.FC = () => {
         <div className={styles.sidebar}>
           <div className={styles.avatarWrapper}>
             <img 
-              src={profile.avatarUrl} 
+              src={`${window.location.origin}/${profile.avatarUrl}`}
               alt="Аватар"
               className={styles.avatar}
             />
@@ -141,16 +144,14 @@ const Profile: React.FC = () => {
           <div className={styles.modsSection}>
             <div className={styles.sectionHeader}>
               <h2>Последние моды</h2>
-              <button className={styles.createButton}>
-                + Новый мод
-              </button>
+            
             </div>
     
             <div className={styles.compactModsList}>
               {userMods.map(mod => (
                 <div key={mod._id} className={styles.compactModCard}>
                   <img 
-                    src={mod.previewImage} 
+                    src={`${window.location.origin}/${mod.previewImage}`}
                     alt={mod.title}
                     className={styles.modThumbnail}
                   />

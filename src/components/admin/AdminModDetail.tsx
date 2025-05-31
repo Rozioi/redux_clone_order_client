@@ -4,10 +4,7 @@ import styles from "../../assets/AdminModDetail.module.scss";
 import ApiService from "../../services/api.service";
 import { IMod } from "../../interface/mod.interface";
 
-interface Category {
-  _id: string;
-  name: string;
-}
+
 
 const AdminModDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -126,9 +123,9 @@ const AdminModDetail: React.FC = () => {
         <div className={styles.section}>
           <h2>Категории</h2>
           <div className={styles.categories}>
-            {mod.categories?.map((category: Category) => (
-              <div key={category._id} className={styles.category}>
-                {category.name}
+            {mod.categories?.map((category: string) => (
+              <div key={category} className={styles.category}>
+                {category}
               </div>
             ))}
           </div>

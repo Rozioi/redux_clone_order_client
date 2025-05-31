@@ -9,12 +9,14 @@ import Modal from "../Modal";
 import { copyClipboard, copyUrl } from "../../utils/clipboard";
 import ApiService from '../../services/api.service';
 import { Notification } from "../Notification";
+import { ICategory } from "../../interface/category.interface";
 interface ModCardProps {
   mod: IModCard;
   showVideo?: boolean;
+  allCategories?: ICategory[]; 
 }
 
-const ModCard: React.FC<ModCardProps> = ({ mod, showVideo }) => {
+const ModCard: React.FC<ModCardProps> = ({ mod, showVideo, allCategories = []}) => {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const handleShare = () => {
@@ -24,13 +26,43 @@ const ModCard: React.FC<ModCardProps> = ({ mod, showVideo }) => {
     }
   };
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [userVote, setUserVote] = useState<'like' | 'dislike' | null>(null);
+  
   const [modState, setModState] = useState<IModCard>(mod);
+  const [categoryNames, setCategoryNames] = useState<{[key: string]: string}>({});
+  const [userVote, setUserVote] = useState<'like' | 'dislike' | null>(null);
   useEffect(() => {
     const savedVote = localStorage.getItem(`vote-${mod._id}`);
     if (savedVote) setUserVote(savedVote as 'like' | 'dislike');
-    
   }, []);
+  
+  useEffect(() => {
+    const fetchCategoryNames = async () => {
+      
+      if (!modState.categories) return;
+      
+      const newCategoryNames: {[key: string]: string} = {};
+      
+      try {
+        const categoriesData = await Promise.all(
+          modState.categories.map(category => 
+            ApiService.getCategoryById(category)
+          )
+        );
+        
+        categoriesData.forEach(category => {
+          if (category) {
+            newCategoryNames[category._id] = category.name;
+          }
+        });
+        
+        setCategoryNames(newCategoryNames);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategoryNames();
+  }, []);
+
   
   useEffect(() => {
     if (userVote) {
@@ -94,7 +126,7 @@ const ModCard: React.FC<ModCardProps> = ({ mod, showVideo }) => {
         {showVideo && modState.youtubeLink ? (
           <div className={styles.iframeWrapper}>
             <iframe
-              src={modState.youtubeLink}
+            src={`https://www.youtube.com/embed/${modState.youtubeLink.split('v=')[1]}`}
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -123,11 +155,14 @@ const ModCard: React.FC<ModCardProps> = ({ mod, showVideo }) => {
 
         <div className={styles.categoriesAndComments}>
           <div className={styles.categories}>
-            {modState.categories?.map((category) => (
-              <span key={category._id} className={styles.category}>
-                {category.name}
-              </span>
-            ))}
+            {modState.categories?.map((categoryId) => {
+                      const category = allCategories.find((c) => c._id === categoryId);
+                      return (
+                        <span key={categoryId} className={styles.category}>
+                          {category?.name || 'Unknown'}
+                        </span>
+                      );
+                    })}
           </div>
 
           <button
@@ -198,7 +233,7 @@ const ModCard: React.FC<ModCardProps> = ({ mod, showVideo }) => {
                 : "скрыто";
 
               if (textToCopy) {
-                copyClipboard(textToCopy);
+                copyClipboard(`${window.location.origin}/user/${modState.discord}`);
                 const originalText = target.textContent;
                 target.textContent = "Скопировано!";
                 setTimeout(() => {

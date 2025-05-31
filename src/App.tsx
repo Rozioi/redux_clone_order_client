@@ -38,8 +38,8 @@ const AppContent: React.FC = () => {
     location.pathname.includes("admin-login");
   const isYourModsPage = location.pathname === "/your-mods";
   const isReviewsPage = location.pathname === "/reviews";
-  const isProfilePage = location.pathname === "/profile";
-  const isCategoryPage =
+  const isProfilePage = location.pathname.includes("/user");
+  // const isCategoryPage =
     location.pathname.includes("/redux/") ||
     location.pathname.includes("/gunpack/") ||
     location.pathname.includes("/clothes/") ||
@@ -53,7 +53,7 @@ const AppContent: React.FC = () => {
     !isModDetailPage &&
     !isAuthPage &&
     !isYourModsPage &&
-    !isCategoryPage &&
+    // !isCategoryPage &&
     !isReviewsPage &&
     !isAdminPage &&
     !isProfilePage;
@@ -62,7 +62,7 @@ const AppContent: React.FC = () => {
     isAuthPage ||
     isYourModsPage ||
     isReviewsPage ||
-    isCategoryPage ||
+    // isCategoryPage ||
     isAdminPage ||
     isProfilePage
       ? { marginLeft: 0 }
@@ -80,10 +80,11 @@ const AppContent: React.FC = () => {
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/mod/:id" element={<ModDetail />} />
             <Route path="/your-mods" element={<CreateMod />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/user/:username" element={<Profile />} />
             <Route path="/log" element={<LoginPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/:category/:subcategory?" element={<ModList />} />
             {/* <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/admin/mods/:id" element={<AdminModDetail />} /> */}

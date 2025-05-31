@@ -65,7 +65,7 @@ const Header: React.FC = () => {
           onClick={handleProfileClick}
           title={user ? "Профиль" : "Войти"}
         >
-          {isAuthenticated ? <img src="avatar.jpeg"/> : <FaUser />}
+          {isAuthenticated ? <img src={`${window.location.origin}/avatar.jpeg`}/> : <FaUser />}
         </div>
         {isAdmin && (
           <Link to="/admin" className={styles.crownIcon} title="Админ панель">

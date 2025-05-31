@@ -1,30 +1,40 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IMod } from '../../interface/mod.interface';
 import ApiService from '../../services/api.service';
 import { useAuth } from '../../context/AuthContext';
 import styles from '../../assets/ModList.module.scss';
 import ModCard from './ModCard';
 import { FaSearch, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+import { ICategory } from '../../interface/category.interface';
 
 const ModList: React.FC = () => {
   const [mods, setMods] = useState<IMod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated } = useAuth();
+  const { category: categorySlug, subcategory: subcategorySlug } = useParams<{
+      category?: string;
+      subcategory?: string;
+    }>();
 
   const [showVideo, setShowVideo] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<'date' | 'downloads'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-
+  const [categories, setCategories] = useState<ICategory[]>([]);
   useEffect(() => {
     const fetchMods = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await ApiService.getMods();
-        setMods(data);
+        const [modsData, categoriesData] = await Promise.all([
+               ApiService.getMods(),
+               ApiService.getCategories()
+             ]);
+             
+             setMods(modsData);
+             setCategories(categoriesData);
       } catch (err) {
         setError('Ошибка при загрузке модов');
         console.error('Error fetching mods:', err);
@@ -35,26 +45,53 @@ const ModList: React.FC = () => {
 
     fetchMods();
   }, []);
-
   const filteredAndSortedMods = useMemo(() => {
-    const filtered = mods.filter((mod) =>
-      mod.modName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const sorted = filtered.sort((a, b) => {
-      let comparison = 0;
-
-      if (sortBy === 'date') {
-        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      } else if (sortBy === 'downloads') {
-        comparison = (a.rating.downloads || 0) - (b.rating.downloads || 0);
+    let filtered = [...mods];
+    if (categorySlug) {
+      const category = categories.find(c => 
+        c.name.toLowerCase() === categorySlug.toLowerCase() && !c.parentId
+      );
+      
+      if (category) {
+        filtered = filtered.filter(mod => 
+          mod.categories?.includes(category._id || '')
+        );
+  
+        if (subcategorySlug) {
+        
+          const subcategory = categories.find(c => 
+            c.name.toLowerCase() === subcategorySlug.toLowerCase() && 
+            c.parentId === category._id
+          );
+          
+          if (subcategory) {
+  
+            filtered = filtered.filter(mod =>
+              mod.categories?.includes(subcategory._id || '')
+            );
+          }
+        }
       }
-
-      return sortOrder === 'asc' ? comparison : -comparison;
-    });
-
-    return sorted;
-  }, [mods, searchQuery, sortBy, sortOrder]);
+    }
+      if (searchQuery) {
+        filtered = filtered.filter(mod =>
+          mod.modName.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+  
+     
+      return filtered.sort((a, b) => {
+        if (sortBy === 'date') {
+          return sortOrder === 'asc' 
+            ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        } else {
+          return sortOrder === 'asc'
+            ? (a.rating?.downloads || 0) - (b.rating?.downloads || 0)
+            : (b.rating?.downloads || 0) - (a.rating?.downloads || 0);
+        }
+      });
+    }, [mods, categories, categorySlug, subcategorySlug, searchQuery, sortBy, sortOrder]);
 
   
 
@@ -134,10 +171,21 @@ const ModList: React.FC = () => {
       </div>
 
       <div className={styles.modsGrid}>
-        {filteredAndSortedMods.map((mod) => (
-          <ModCard key={mod._id} mod={mod} showVideo={showVideo} />
-        ))}
-      </div>
+            {filteredAndSortedMods.length > 0 ? (
+              filteredAndSortedMods.map((mod) => (
+                <ModCard 
+                  key={mod._id} 
+                  mod={mod} 
+                  showVideo={showVideo} 
+                  allCategories={categories}
+                />
+              ))
+            ) : (
+              <div className={styles.noResults}>
+                {categorySlug ? 'Нет модов в этой категории' : 'Моды не найдены'}
+              </div>
+            )}
+          </div>
     </div>
   );
 };

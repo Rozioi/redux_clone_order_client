@@ -12,7 +12,7 @@ const api = axios.create({
   },
 });
 
-// Добавляем перехватчик для установки токена
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -31,7 +31,7 @@ class ApiService {
     const result = await api.post<boolean>('/mods/update_rating', { modId, param,operation });
     return result.data;
   }
-
+  
   static async register(username: string, email: string, password: string): Promise<IAuthResponse> {
     const { data } = await api.post<IAuthResponse>('/auth/register', { username, email, password });
     return data;
@@ -111,6 +111,10 @@ class ApiService {
   static async updateCategory(id: string, categoryData: Partial<ICategoryCreate>): Promise<ICategory> {
     const { data } = await api.patch<ICategory>(`/categories/${id}`, categoryData);
     return data;
+  }
+  static async getCategoryById(categoryId:any): Promise<any>{
+    const result = await api.get<any>(`/category/${categoryId}`);
+    return result.data;
   }
 
   static async deleteCategory(id: string): Promise<void> {
