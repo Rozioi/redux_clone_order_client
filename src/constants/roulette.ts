@@ -1,0 +1,18 @@
+export const ROULETTE_CONFIG = {
+  ANIMATION: {
+    INITIAL_SPINS: 3,
+    ITEM_WIDTH: 200,
+    DURATION: 3000,
+    NAVIGATION_DELAY: 1000,
+    SPIN_DELAY: 100,
+  },
+  STYLES: {
+    CARD_WIDTH: 200,
+    CARD_HEIGHT: 300,
+    MOBILE_CARD_WIDTH: 150,
+    MOBILE_CARD_HEIGHT: 250,
+  },
+  BREAKPOINTS: {
+    MOBILE: 768,
+  },
+} as const; 

@@ -21,6 +21,8 @@ const CreateMod: React.FC = () => {
   const [formData, setFormData] = useState<IModCreate>({
     modName: '',
     description: '',
+    fileLink: '',
+    archivePassword: '',
     categoryIds: [],
     discord: '' ,
     isVisibleDiscord: true,
@@ -70,7 +72,7 @@ const CreateMod: React.FC = () => {
         return {
           ...prev,
           youtubeLink: value,
-          previewLink: thumbnail || value // fallback на саму ссылку если thumbnail не получен
+          previewLink: thumbnail || value 
         };
       } else {
         return {
@@ -117,6 +119,10 @@ const CreateMod: React.FC = () => {
       setError('Войдите в свою учётную запись');
       return;
     }
+    if (!(formData.fileLink.includes('disk.yandex'))) {
+      setError('Укажите ссылку на архив');
+      return;
+    }
     try {
       setLoading(true);
       await ApiService.createMod(formData);
@@ -142,6 +148,7 @@ const CreateMod: React.FC = () => {
             name="modName"
             value={formData.modName}
             onChange={handleInputChange}
+            placeholder="Название мода"
             required
           />
         </div>
@@ -152,6 +159,7 @@ const CreateMod: React.FC = () => {
             name="description"
             value={formData.description}
             onChange={handleInputChange}
+            placeholder="Поддерживает markdown"
             required
           />
         </div>
@@ -241,6 +249,25 @@ const CreateMod: React.FC = () => {
               className={styles.previewImg}
             />
           ) : null}
+          <div className={styles.formGroup}>
+            <label>Ссылка на архив (Яндекс.Диск) </label>
+            <input
+              name="fileLink"
+              placeholder='https://disk.yandex.ru/d/4CEjl8H7m6hjmA'
+              value={formData.fileLink}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Пороль от архива (если присутствует) </label>
+            <input
+              name="archivePassword"
+              value={formData.archivePassword}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
         </div>
 
         <button

@@ -7,18 +7,32 @@ body {
   margin: 0;
   font-weight: 500;
   letter-spacing: 0.3px;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .app {
   min-height: 100vh;
-  background-color: #242424;
-  color: white;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
 
 .mainContent {
-    
-  min-height: calc(100vh - 80px);
-  width: 100;
+  flex: 1;
+  padding: 1rem;
+  transition: margin-left 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  &.withSidebar {
+    margin-left: 250px;
+    max-width: calc(100% - 250px);
+  }
+
+  &.withoutSidebar {
+    margin-left: 0;
+    max-width: 100%;
+  }
 }

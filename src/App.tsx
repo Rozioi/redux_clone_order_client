@@ -16,11 +16,19 @@ import Login from "./components/auth/Login";
 import RegisterPage from "./components/auth/RegisterPage";
 // import AdminLogin from "./components/AdminLogin";
 import LoginPage from "./components/auth/LoginPage";
-// import AdminModDetail from './components/AdminModDetail';
+import AdminModDetail from "./components/admin/AdminModDetail";
+import AdminPanel from "./components/admin/AdminPanel";
 import Profile from './components/Profile';
 import { AuthProvider } from './context/AuthContext';
-import EditMod from "./components/mod/EditMod";
 import CreateMod from "./components/mod/CreateMod";
+import { AdminBadgeManager } from "./components/AdminBadgeManager";
+import SubscriptionSelection from "./components/subscription/SubscriptionSelection";
+import { PaymentSuccess } from "./components/PaymentSuccess";
+import { PaymentFailure } from "./components/PaymentFailure";
+import UserSubscriptions from "./components/subscription/UserSubscriptions";
+import PaymentSuccessful from "./pages/PaymentSuccessful";
+import DeactivateSubscription from "./pages/DeactivateSubscription";
+import RoulettePage from "./pages/RoulettePage";
 
 // Ленивая загрузка компонентов
 const ModList = lazy(() => import("./components/mod/ModList"));
@@ -38,6 +46,7 @@ const AppContent: React.FC = () => {
     location.pathname.includes("admin-login");
   const isYourModsPage = location.pathname === "/your-mods";
   const isReviewsPage = location.pathname === "/reviews";
+  const isSubscriptionPage = location.pathname === "/subscriptions" || location.pathname === "/payment/success" || location.pathname === "/payment/failure";
   const isProfilePage = location.pathname.includes("/user");
   // const isCategoryPage =
     location.pathname.includes("/redux/") ||
@@ -53,27 +62,18 @@ const AppContent: React.FC = () => {
     !isModDetailPage &&
     !isAuthPage &&
     !isYourModsPage &&
+    !isSubscriptionPage &&
     // !isCategoryPage &&
     !isReviewsPage &&
     !isAdminPage &&
     !isProfilePage;
-  const mainContentStyle =
-    isModDetailPage ||
-    isAuthPage ||
-    isYourModsPage ||
-    isReviewsPage ||
-    // isCategoryPage ||
-    isAdminPage ||
-    isProfilePage
-      ? { marginLeft: 0 }
-      : {marginLeft: '250px'};
 
   return (
     <div className={styles.app}>
       <SnowBackground />
       {!isAdminPage && !location.pathname.includes("admin-login") && <Header />}
       {shouldShowSidebar && <LeftSidebar />}
-      <main className={styles.mainContent} style={mainContentStyle}>
+      <main className={`${styles.mainContent} ${shouldShowSidebar ? styles.withSidebar : styles.withoutSidebar}`}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<ModList />} />
@@ -81,13 +81,21 @@ const AppContent: React.FC = () => {
             <Route path="/mod/:id" element={<ModDetail />} />
             <Route path="/your-mods" element={<CreateMod />} />
             <Route path="/user/:username" element={<Profile />} />
+            <Route path="/roulette" element={<RoulettePage />} />
             <Route path="/log" element={<LoginPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/:category/:subcategory?" element={<ModList />} />
-            {/* <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminPanel />} />
-            <Route path="/admin/mods/:id" element={<AdminModDetail />} /> */}
+             <Route path="/subscriptions" element={<SubscriptionSelection />} />
+             <Route path="/deactivate-subscription/:subscriptionId" element={<DeactivateSubscription />} />
+            <Route path="/my-subscriptions" element={<UserSubscriptions />} />
+            <Route path="/payment/success" element={<PaymentSuccessful />} />
+            <Route path="/payment/failure" element={<PaymentFailure />} />
+            <Route path="/:category/:subcategory?" element={<ModList />} />
+            {/* // <Route path="/admin-login" element={<AdminLogin />} />
+               */}
+           
+            <Route path="/admin/mods/:id" element={<AdminModDetail />} />
             <Route path="/404" element={<div>404 Not Found</div>} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>

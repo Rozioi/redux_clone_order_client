@@ -4,6 +4,7 @@ export interface IModCard {
   description: string;
   previewLink: string;
   fileLink: string;
+  localFilePath?: string;
   youtubeLink?: string; 
   categories?: string[];
   rating: {

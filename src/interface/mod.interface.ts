@@ -3,7 +3,11 @@ import { ICategory } from './category.interface';
 import { IUser, IUserWithPermissions } from './user.interface';
 
 export type ModStatus = typeof MOD_STATUS[keyof typeof MOD_STATUS];
-
+export interface ICommentsRequest {
+  modId: string;
+  userId: string;
+  content: string;
+}
 export interface IModCard {
   _id: string;
   modName: string;
@@ -95,7 +99,7 @@ export interface IModCreate {
   description: string;
   categoryIds: string[];
   previewLink?: string;
-  fileLink?: string;
+  fileLink: string;
   youtubeLink?: string;
   discord: string;
   isVisibleDiscord: boolean;

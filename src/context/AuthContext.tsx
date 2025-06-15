@@ -1,10 +1,42 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { IUserWithPermissions } from '../interface/user.interface';
 
+export type Role = 'highAdmin' | 'lowAdmin' | 'moderator';
+
+export type PermissionKey =
+  | 'mods:approve'     
+  | 'mods:edit'       
+  | 'mods:delete'      
+  | 'mods:hide'        
+
+  | 'comments:delete' 
+  | 'reviews:moderate' 
+  | 'reports:view'  
+  
+  | 'users:ban'       
+  | 'users:mute'       
+  | 'users:assign_badge'
+
+  | 'categories:manage' 
+
+  | 'subscriptions:manage'
+  | 'notifications:send'
+
+
+export interface IAdmin {
+  _id?: string;
+  name: string;
+  role: Role;
+  userId: string;
+  permissions: PermissionKey[];
+  allowedCategoryIds?: string[];
+}
+
 interface AuthContextType {
   user: IUserWithPermissions | null;
   token: string | null;
-  login: (userData: IUserWithPermissions, token: string) => void;
+  login: (userData: IUserWithPermissions, token: string,admin?: IAdmin) => void;
+  admin?: IAdmin | null;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -23,6 +55,7 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<IUserWithPermissions | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [admin, setAdmin] = useState<IAdmin | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +65,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    const storedUser  = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
+    const storedAdmin = localStorage.getItem('admin');
+    
     if (storedToken && storedUser) {
       try {
         const raw = JSON.parse(storedUser) as Omit<IUserWithPermissions, 'last_login' | 'createdAt'> & {
@@ -46,35 +81,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           createdAt: new Date(raw.createdAt),
         };
         setUser(parsedUser);
+        setAdmin(storedAdmin ? JSON.parse(storedAdmin) : null);
         setToken(storedToken);
       } catch (e) {
         console.error('AuthContext: failed to parse stored user', e);
         localStorage.removeItem('user');
+        localStorage.removeItem('admin');
         localStorage.removeItem('token');
+        setUser(null);
+        setToken(null);
+        setAdmin(null);
       }
+    } else {
+      // Если нет токена или пользователя, очищаем состояние
+      setUser(null);
+      setToken(null);
+      setAdmin(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('admin');
+      localStorage.removeItem('token');
     }
     setLoading(false);
   }, []);
 
-  const login = (userData: IUserWithPermissions, jwt: string) => {
-    // При логине обнуляем ошибки
+  const login = (userData: IUserWithPermissions, jwt: string, admin?: IAdmin | null) => {
     setError(null);
     setUser(userData);
+    setAdmin(admin ?? null);
     setToken(jwt);
-    // Сохраняем даты как ISO-строки
+  
     localStorage.setItem('user', JSON.stringify({
       ...userData,
       last_login: userData.last_login ?? null,
       createdAt: userData.createdAt,
     }));
     localStorage.setItem('token', jwt);
+  
+    if (admin) {
+      localStorage.setItem('admin', JSON.stringify(admin));
+    } else {
+      localStorage.removeItem('admin');
+    }
   };
+  
 
   const logout = () => {
     setUser(null);
     setToken(null);
     setError(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('admin');
     localStorage.removeItem('token');
   };
 
@@ -84,6 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         token,
         login,
+        admin,
         logout,
         isAuthenticated,
         isAdmin,

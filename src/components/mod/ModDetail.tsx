@@ -9,6 +9,9 @@ import { Notification } from "../Notification";
 import clsx from 'clsx';
 import { FaDownload, FaShare } from 'react-icons/fa';
 import { TbHeart, TbHeartBroken } from 'react-icons/tb';
+import MarkdownReact from './MarkdownReact';
+import Modal from '../Modal';
+import DownloadModal from './DownloadModal';
 
 const ModDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +24,64 @@ const ModDetail: React.FC = () => {
   const [userVote, setUserVote] = useState<'like' | 'dislike' | null>(null);
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showNotification, setShowNotification] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [downloadSpeed, setDownloadSpeed] = useState(1); // МБ/с
+  const [canAccessCategory, setCanAccessCategory] = useState(true);
+  const [quota, setQuota] = useState({
+    basic: 1,
+    medium: 5,
+    premium: 10,
+    free: 0.5
+  });
+
+  const handleDownload = async () => {
+    try {
+      if (!mod?.localFilePath) {
+        throw new Error('Файл недоступен для скачивания');
+      }
+
+      // Обновляем счетчик загрузок
+      await ApiService.updateRatingMod(mod._id, 'rating.downloads', 'add');
+      
+      // Получаем имя файла из пути
+      const fileName = mod.localFilePath.split('/').pop();
+      if (!fileName) {
+        throw new Error('Неверный формат пути к файлу');
+      }
+
+      console.log('Скачивание файла:', fileName, 'со скоростью:', downloadSpeed, 'МБ/с');
+
+      // Скачиваем файл с ограничением скорости
+      const blob = await ApiService.downloadMod(fileName, downloadSpeed);
+      const url = window.URL.createObjectURL(blob);
+      
+      // Создаем временную ссылку для скачивания
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${mod.modName}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      // Обновляем локальное состояние
+      setMod(prev => prev ? {
+        ...prev,
+        rating: {
+          ...prev.rating,
+          downloads: (prev.rating.downloads || 0) + 1
+        }
+      } : null);
+
+      setIsDownloadModalOpen(false);
+    } catch (err) {
+      console.error('Ошибка при скачивании:', err);
+      setNotificationMessage('Ошибка при скачивании мода');
+      setShowNotification(true);
+      setIsDownloadModalOpen(false);
+    }
+  };
 
   useEffect(() => {
     const fetchMod = async () => {
@@ -47,7 +108,7 @@ const ModDetail: React.FC = () => {
     const fetchCategoryNames = async () => {
       if (!mod?.categories) return;
       
-      const newCategoryNames: {[key: string]: string} = {};
+      const newCategoryNames: Record<string, string> = {};
       
       try {
         const categoriesData = await Promise.all(
@@ -57,7 +118,7 @@ const ModDetail: React.FC = () => {
         );
         
         categoriesData.forEach(category => {
-          if (category) {
+          if (category && category._id) {
             newCategoryNames[category._id] = category.name;
           }
         });
@@ -70,6 +131,81 @@ const ModDetail: React.FC = () => {
 
     if (mod) fetchCategoryNames();
   }, [mod]);
+
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (!user || !mod) return;
+
+      try {
+        // Получаем подписки пользователя
+        const subscriptions = await ApiService.getUserSubscriptions(user._id);
+        const activeSubscription = subscriptions.find(sub => sub.isActive);
+
+        // Проверяем доступ к категории
+        if (mod.categories && mod.categories.length > 0) {
+          const hasAccess = activeSubscription?.subscription.allowedCategories.some(
+            categoryId => mod.categories?.includes(categoryId)
+          );
+          setCanAccessCategory(hasAccess || false);
+        }
+
+        // Устанавливаем скорость загрузки в зависимости от подписки
+        if (activeSubscription) {
+          switch (activeSubscription.subscription.level) {
+            case 'premium':
+              setDownloadSpeed(10);
+              break;
+            case 'medium':
+              setDownloadSpeed(5);
+              break;
+            default:
+              setDownloadSpeed(1);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking access:', err);
+      }
+    };
+
+    checkAccess();
+  }, [user, mod]);
+
+  useEffect(() => {
+    const fetchQuotaSettings = async () => {
+      try {
+        const settings = await ApiService.getSubscriptionSettings();
+        if (settings?.downloadQuota) {
+          setQuota(settings.downloadQuota);
+          // Обновляем скорость загрузки при получении новых квот
+          if (user) {
+            const subscriptions = await ApiService.getUserSubscriptions(user._id);
+            const activeSubscription = subscriptions.find(sub => sub.isActive);
+            
+            if (activeSubscription) {
+              switch (activeSubscription.subscription.level) {
+                case 'premium':
+                  setDownloadSpeed(settings.downloadQuota.premium);
+                  break;
+                case 'medium':
+                  setDownloadSpeed(settings.downloadQuota.medium);
+                  break;
+                default:
+                  setDownloadSpeed(settings.downloadQuota.basic);
+              }
+            } else {
+              setDownloadSpeed(settings.downloadQuota.free);
+            }
+          } else {
+            setDownloadSpeed(settings.downloadQuota.free);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching quota settings:', err);
+      }
+    };
+
+    fetchQuotaSettings();
+  }, [user]);
 
   const handleUpdateRating = async (voteType: 'like' | 'dislike') => {
     if (!mod) return;
@@ -135,6 +271,55 @@ const ModDetail: React.FC = () => {
     }
   };
 
+  const handleDownloadClick = async () => {
+    if (!user) {
+      setIsDownloadModalOpen(true);
+      return;
+    }
+
+    try {
+      // Получаем подписки пользователя
+      const subscriptions = await ApiService.getUserSubscriptions(user._id);
+      const activeSubscription = subscriptions.find(sub => sub.isActive);
+
+      // Проверяем доступ к категории
+      if (mod?.categories && mod.categories.length > 0) {
+        const hasAccess = activeSubscription?.subscription.allowedCategories.some(
+          categoryId => mod.categories?.includes(categoryId)
+        );
+        setCanAccessCategory(hasAccess || false);
+      }
+
+      // Устанавливаем скорость загрузки на основе текущих квот
+      if (activeSubscription) {
+        switch (activeSubscription.subscription.level) {
+          case 'premium':
+            setDownloadSpeed(quota.premium);
+            break;
+          case 'medium':
+            setDownloadSpeed(quota.medium);
+            break;
+          default:
+            setDownloadSpeed(quota.basic);
+        }
+      } else {
+        setDownloadSpeed(quota.free);
+      }
+
+      if (!canAccessCategory) {
+        setNotificationMessage('Для доступа к этому моду требуется подписка');
+        setShowNotification(true);
+        return;
+      }
+
+      setIsDownloadModalOpen(true);
+    } catch (err) {
+      console.error('Error checking access:', err);
+      setNotificationMessage('Ошибка при проверке доступа');
+      setShowNotification(true);
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -190,7 +375,10 @@ const ModDetail: React.FC = () => {
       <div className={styles.content}>
         <div className={styles.mainInfo}>
           <div className={styles.promoImage}>
-            <img src="https://reduxhub.ru/assets/img/promo2.webp" alt="Promo" />
+            <img src="https://steamuserimages-a.akamaihd.net/ugc/867370346063551919/1012069FD95DF8865BF63B779497C65D08120678/" alt="Promo" />
+            <div className={styles.backButton} onClick={() => setIsOpen(true)}>
+              Описание
+            </div>
           </div>
           <div className={styles.infoBlock}>
             <h1 className={styles.title}>{mod.modName}</h1>
@@ -209,9 +397,11 @@ const ModDetail: React.FC = () => {
                 <span>Verifed</span>
                 <span className={styles.verifiedIcon}>✓</span>
               </div>
-              <button className={styles.downloadButton}>
-                <span>{mod.rating.downloads?.toLocaleString() ?? 0}</span>
-                <FaDownload />
+              <button 
+                className={styles.downloadButton}
+                onClick={handleDownloadClick}
+              >
+                <FaDownload /> Скачать
               </button>
             </div>
             <div className={styles.metaInfo}>
@@ -273,23 +463,47 @@ const ModDetail: React.FC = () => {
           {mod.archivePassword && (
             <div 
               onClick={() => {
+                copyClipboard(mod.archivePassword || '');
                 setNotificationMessage("Пароль скопирован!");
-                if (mod.archivePassword) { copyClipboard(mod.archivePassword);  setShowNotification(true);}; 
-               
+                setShowNotification(true);
               }} 
               className={styles.password}
             > 
-              <p>Пароль от архива:</p>
-              <p>{mod.archivePassword}</p>
+              <p>Пароль от архива: <span>{mod.archivePassword}</span></p>
             </div>
           )}
         </div>
       </div>
+      <Modal isOpen={isOpen}>
+        
+        <div className={styles['modal-content']}>
+          <div className={styles["modal-header"]}>
+            <h2>Описание</h2>
+            <button
+              className={styles["closeButtonStyles"]}
+              onClick={() => setIsOpen(false)}
+            >
+              ✖
+            </button>
+          </div>
+           <MarkdownReact content={mod.description} />
+        </div>
+      </Modal>
       
       <Notification 
         message={notificationMessage}
         show={showNotification} 
         onHide={() => setShowNotification(false)} 
+      />
+
+      <DownloadModal
+        isOpen={isDownloadModalOpen}
+        onClose={() => setIsDownloadModalOpen(false)}
+        onDownload={handleDownload}
+        modName={mod?.modName || ''}
+        downloadSpeed={downloadSpeed}
+        isPremium={downloadSpeed > quota.medium}
+        quota={quota}
       />
     </div>
   );

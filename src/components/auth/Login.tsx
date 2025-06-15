@@ -29,11 +29,11 @@ const Login: React.FC = () => {
 
             if (res.status === 'verification_required') {
                 setShowVerification(true);
-                setPendingEmail(res.user.email);
-                setIsAdmin(res.user.role === 'admin');
+                setPendingEmail(res.email || '');
+                setIsAdmin(res.isAdmin || false);
             } else {
                 localStorage.setItem('token', res.token);
-                login(res.user, res.token);
+                login(res.user, res.token,res.admin);
                 navigate('/');
             }
         } catch (err) {
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
             });
     
             localStorage.setItem('token', data.token);
-            login(data.user, data.token);
+            login(data.user, data.token, data.admin);
             navigate('/');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Ошибка подтверждения');

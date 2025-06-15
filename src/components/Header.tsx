@@ -17,7 +17,7 @@ const Header: React.FC = () => {
 
   const handleProfileClick = () => {
     if (user) {
-      navigate('/profile');
+      navigate(`/user/${user.username}`);
     } else {
       navigate('/login');
     }
@@ -60,6 +60,11 @@ const Header: React.FC = () => {
 
       <div className={styles.rightSection}>
         <LoginButton />
+        {isAuthenticated && (
+          <Link to="/my-subscriptions" className={styles.subscriptionIcon} title="Мои подписки">
+            <FaCrown />
+          </Link>
+        )}
         <div 
           className={`${styles.profileIcon} ${user ? styles.active : ''}`}
           onClick={handleProfileClick}

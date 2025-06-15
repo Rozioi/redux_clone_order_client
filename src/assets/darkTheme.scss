@@ -1,0 +1,51 @@
+:root {
+  --dark-bg-primary: #1a1a1a;
+  --dark-bg-secondary: #2d2d2d;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #b3b3b3;
+  --dark-accent: #4a90e2;
+  --dark-error: #ff4d4f;
+  --dark-success: #52c41a;
+  --dark-border: #404040;
+  --dark-shadow: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  background-color: var(--dark-bg-primary);
+  color: var(--dark-text-primary);
+}
+
+.page-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: var(--dark-bg-primary);
+}
+
+.card {
+  background-color: var(--dark-bg-secondary);
+  border: 1px solid var(--dark-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px var(--dark-shadow);
+}
+
+.button {
+  background-color: var(--dark-accent);
+  color: var(--dark-text-primary);
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.error-text {
+  color: var(--dark-error);
+}
+
+.success-text {
+  color: var(--dark-success);
+} 

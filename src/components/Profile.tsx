@@ -1,81 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ApiService from '../services/api.service';
-import { IUserProfile } from '../interface/user.interface';
+import ApiService, { IUserBadge } from '../services/api.service';
+import { IUserProfile, IUserStats } from '../interface/user.interface';
+import { IMod } from '../interface/mod.interface';
 import styles from '../assets/Profile.module.scss';
-interface IMod {
-  _id: string;
-  title: string;
-  description: string;
-  status: string;
-  downloadsCount: number;
-  previewImage: string;
-  videoUrl?: string;
-  modUrl: string;
-  createdAt: string;
-}
 
 const Profile: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<IUserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [userMods, setUserMods] = useState<IMod[]>([]);
   const { username } = useParams();
   
+  const [profile, setProfile] = useState<IUserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [userMods, setUserMods] = useState<IMod[]>([]);
+  const [userStats, setUserStats] = useState<IUserStats | null>(null);
+  const [badges, setBadges] = useState<IUserBadge[]>([]);
+
+  const fetchUserData = useCallback(async () => {
+    if (!username) {
+      setError('Требуется имя пользователя');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const userData = await ApiService.getUserByUsernameOrId(username);
+      
+      if (!userData) {
+        setError('Пользователь не найден');
+        setLoading(false);
+        return;
+      }
+
+      const [stats, mods, userBadges] = await Promise.all([
+        ApiService.getUserStatsById(userData._id),
+        ApiService.getModsByUserId(userData._id),
+        ApiService.getBadgeByUserId(userData._id)
+      ]);
+
+      setProfile({
+        _id: userData._id,
+        username: userData.username,
+        email: userData.email,
+        name: userData.username,
+        createdAt: userData.createdAt,
+        updatedAt: new Date(),
+        modsCount: stats?.totalMods || 0,
+        reviewsCount: stats?.rating || 0,
+        avatarUrl: 'avatar.jpeg'
+      });
+
+      setUserStats(stats);
+      setUserMods(mods || []);
+      setBadges(Array.isArray(userBadges) ? userBadges : []);
+    } catch (err) {
+      console.error('Ошибка загрузки профиля:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка загрузки профиля');
+    } finally {
+      setLoading(false);
+    }
+  }, [username]);
 
   useEffect(() => {
-  
-    const fetchProfile = async () => {
-      try {
-       
-        const testProfile: IUserProfile = {
-          _id: '1',
-          username: 'TestUser',
-          email: 'test@example.com',
-          name: 'Тестовый Пользователь',
-          createdAt: '2024-01-01T00:00:00.000Z',
-          updatedAt: '2024-03-01T12:00:00.000Z',
-          modsCount: 5,
-          reviewsCount: 12,
-          avatarUrl: 'avatar.jpeg'
-        };
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setProfile(testProfile);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-    };
-
-    const fetchMods = async () => {
-      try {
-        // Тестовые моды
-        const testMods: IMod[] = [
-          {
-            _id: '1',
-            title: 'Супер машины',
-            description: 'Добавляет новые крутые автомобили в игру',
-            status: 'Опубликован',
-            downloadsCount: 1500,
-            previewImage: 'avatar.jpeg',
-            modUrl: 'https://example.com/mod1.zip',
-            createdAt: '2024-02-01T00:00:00.000Z'
-          }
-        ];
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setUserMods(testMods);
-      } catch (err) {
-        console.error('Ошибка загрузки модов:', err);
-      }
-    };
-
-    fetchProfile();
-    fetchMods();
-  }, []);
+    fetchUserData();
+  }, [fetchUserData]);
 
   const handleLogout = () => {
     logout();
@@ -83,91 +76,146 @@ const Profile: React.FC = () => {
   };
 
   if (loading) {
-    return <div className={styles.loading}>Загрузка...</div>;
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p>Загрузка профиля...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <h2>Ошибка</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Попробовать снова</button>
+      </div>
+    );
   }
 
   if (!profile) {
-    return <div className={styles.error}>Профиль не найден</div>;
+    return (
+      <div className={styles.notFoundContainer}>
+        <h2>Профиль не найден</h2>
+        <p>Запрошенный профиль не существует</p>
+      </div>
+    );
   }
 
   return (
     <div className={styles.profileContainer}>
       <div className={styles.profileHeader}>
-        <h1>Профиль</h1>
-        <button onClick={handleLogout} className={styles.logoutButton}>
-          Выйти
-        </button>
+        <h1>Профиль пользователя</h1>
+        {user?.username === username && (
+          <button onClick={handleLogout} className={styles.logoutButton}>
+            Выйти
+          </button>
+        )}
       </div>
     
       <div className={styles.mainContent}>
-        {/* Блок с аватаром и подпиской */}
+        {/* Боковая панель с информацией о пользователе */}
         <div className={styles.sidebar}>
           <div className={styles.avatarWrapper}>
             <img 
               src={`${window.location.origin}/${profile.avatarUrl}`}
-              alt="Аватар"
+              alt="Аватар пользователя"
               className={styles.avatar}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'avatar.jpeg';
+              }}
             />
           </div>
           
-          <div className={styles.subscriptionStatus}>
-            <h3>Подписка</h3>
-            <div className={styles.subscriptionBadge}>
-              <span className={styles.badgePro}>PRO</span>
-              <span>Действует до: 12.09.2024</span>
+          <div className={styles.userInfo}>
+            <h2 className={styles.username}>{profile.username}</h2>
+            <p className={styles.joinDate}>
+              Участник с: {new Date(profile.createdAt).toLocaleDateString()}
+            </p>
+            
+            <div className={styles.badgesList}>
+              {badges.map((badge) => (
+                <div 
+                  key={badge._id} 
+                  className={`${styles.badge} ${badge.cssClass ? styles[badge.cssClass] : ''}`}
+                  title={badge.badgeType}
+                >
+                  {badge.badge}
+                </div>
+              ))}
             </div>
-            <ul className={styles.subscriptionBenefits}>
-              <li>Премиум-доступ к модам</li>
-              <li>Эксклюзивный контент</li>
-              <li>Приоритетная поддержка</li>
-            </ul>
           </div>
+          
+          {user?.username === username && (
+            <div className={styles.subscriptionStatus}>
+              <h3>Подписка</h3>
+              <div className={styles.subscriptionBadge}>
+                <span className={styles.badgePro}>PRO</span>
+                <span>Действительна до: 12.09.2024</span>
+              </div>
+              <ul className={styles.subscriptionBenefits}>
+                <li>Доступ к премиум модам</li>
+                <li>Эксклюзивный контент</li>
+                <li>Приоритетная поддержка</li>
+              </ul>
+            </div>
+          )}
         </div>
     
-        {/* Основная информация и моды */}
+        {/* Основная область контента */}
         <div className={styles.mainInfo}>
           <div className={styles.userStats}>
             <div className={styles.statItem}>
-              <span className={styles.statValue}>{profile.modsCount}</span>
-              <span className={styles.statLabel}>Модов</span>
+              <span className={styles.statValue}>{userStats?.totalMods || 0}</span>
+              <span className={styles.statLabel}>Всего модов</span>
             </div>
             <div className={styles.statItem}>
-              <span className={styles.statValue}>{profile.reviewsCount}</span>
-              <span className={styles.statLabel}>Отзывов</span>
+              <span className={styles.statValue}>{userStats?.approvedMods || 0}</span>
+              <span className={styles.statLabel}>Одобрено</span>
             </div>
             <div className={styles.statItem}>
-              <span className={styles.statValue}>4.8</span>
+              <span className={styles.statValue}>{userStats?.rating || 0}</span>
               <span className={styles.statLabel}>Рейтинг</span>
             </div>
           </div>
     
           <div className={styles.modsSection}>
-            <div className={styles.sectionHeader}>
-              <h2>Последние моды</h2>
+            <h2>Последние моды</h2>
             
-            </div>
-    
-            <div className={styles.compactModsList}>
-              {userMods.map(mod => (
-                <div key={mod._id} className={styles.compactModCard}>
-                  <img 
-                    src={`${window.location.origin}/${mod.previewImage}`}
-                    alt={mod.title}
-                    className={styles.modThumbnail}
-                  />
-                  <div className={styles.modInfo}>
-                    <h3>{mod.title}</h3>
-                    <div className={styles.metaInfo}>
-                      <span className={styles.downloads}>{mod.downloadsCount} скачиваний</span>
-                      <span className={styles.status}>{mod.status}</span>
+            {userMods.length > 0 ? (
+              <div className={styles.compactModsList}>
+                {userMods.map(mod => (
+                  <div key={mod._id} className={styles.compactModCard}>
+                    <img 
+                      src={mod.previewLink || '/assets/default-mod.jpg'}
+                      alt={mod.modName}
+                      className={styles.modThumbnail}
+                    />
+                    <div className={styles.modInfo}>
+                      <h3>{mod.modName}</h3>
+                      <div className={styles.metaInfo}>
+                        <span className={styles.downloads}>
+                          {mod.rating?.downloads || 0} загрузок
+                        </span>
+                        <span className={`${styles.status} ${styles[mod.status]}`}>
+                          {mod.status}
+                        </span>
+                      </div>
                     </div>
+                    <a 
+                      href={mod.fileLink} 
+                      className={styles.downloadLink}
+                      download
+                    >
+                      Скачать
+                    </a>
                   </div>
-                  <a href={mod.modUrl} className={styles.downloadLink}>
-                    ⬇
-                  </a>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.noMods}>Моды отсутствуют</p>
+            )}
           </div>
         </div>
       </div>

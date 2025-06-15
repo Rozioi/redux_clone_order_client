@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import MarkdownReact from "../mod/MarkdownReact";
 import styles from "../../assets/AdminModDetail.module.scss";
 import ApiService from "../../services/api.service";
 import { IMod } from "../../interface/mod.interface";
+import Modal from "../Modal";
 
 
 
 const AdminModDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [categoryNames, setCategoryNames] = useState<{[key: string]: string}>({});
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [mod, setMod] = useState<IMod | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +35,33 @@ const AdminModDetail: React.FC = () => {
 
     fetchMod();
   }, [id]);
-
+  useEffect(() => {
+     const fetchCategoryNames = async () => {
+       if (!mod?.categories) return;
+       
+       const newCategoryNames: Record<string, string> = {};
+       
+       try {
+         const categoriesData = await Promise.all(
+           mod.categories.map(category => 
+             ApiService.getCategoryById(category)
+           )
+         );
+         
+         categoriesData.forEach(category => {
+           if (category && category._id) {
+             newCategoryNames[category._id] = category.name;
+           }
+         });
+         
+         setCategoryNames(newCategoryNames);
+       } catch (error) {
+         console.error('Error fetching categories:', error);
+       }
+     };
+ 
+     if (mod) fetchCategoryNames();
+   }, [mod]);
   if (loading) {
     return <div className={styles.loading}>Загрузка мода...</div>;
   }
@@ -67,7 +97,7 @@ const AdminModDetail: React.FC = () => {
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Описание:</span>
-              <span className={styles.value}>{mod.description}</span>
+              <span className={styles.value} onClick={() => setIsOpen(true)}>Смотреть</span>
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Статус:</span>
@@ -125,7 +155,7 @@ const AdminModDetail: React.FC = () => {
           <div className={styles.categories}>
             {mod.categories?.map((category: string) => (
               <div key={category} className={styles.category}>
-                {category}
+                {categoryNames[category]}
               </div>
             ))}
           </div>
@@ -150,14 +180,14 @@ const AdminModDetail: React.FC = () => {
         </div>
 
         <div className={styles.section}>
-          <h2>Discord информация</h2>
+          <h2>Информация о пользователе</h2>
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}>
-              <span className={styles.label}>Discord ID:</span>
+              <span className={styles.label}>Username:</span>
               <span className={styles.value}>{mod.discord}</span>
             </div>
             <div className={styles.infoItem}>
-              <span className={styles.label}>Видимость Discord:</span>
+              <span className={styles.label}>Видимость Username:</span>
               <span className={styles.value}>
                 {mod.isVisibleDiscord ? 'Видимый' : 'Скрытый'}
               </span>
@@ -180,6 +210,21 @@ const AdminModDetail: React.FC = () => {
           </button>
         </div>
       </div>
+      <Modal isOpen={isOpen}>
+        
+        <div className={styles['modal-content']}>
+          <div className={styles["modal-header"]}>
+            <h2>Описание</h2>
+            <button
+              className={styles["closeButtonStyles"]}
+              onClick={() => setIsOpen(false)}
+            >
+              ✖
+            </button>
+          </div>
+           <MarkdownReact content={mod.description} />
+        </div>
+      </Modal>
     </div>
   );
 };

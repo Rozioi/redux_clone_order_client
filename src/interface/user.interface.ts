@@ -1,6 +1,8 @@
 import { ROLES } from '../config';
 
-export type UserRole = typeof ROLES[keyof typeof ROLES];
+// export type UserRole = typeof ROLES[keyof typeof ROLES];
+
+export type UserRole = 'user' | 'moderator' | 'admin';
 
 export interface IUserPermissions {
   role: UserRole;
@@ -23,13 +25,24 @@ export interface IUser {
   createdAt: Date;
 }
 
+export interface IUserStats {
+  _id: string;
+  userId: string;
+  modCount: number;
+  ratingAverage: number | null;
+  totalMods: number;
+  approvedMods: number;
+  pendingMods: number;
+  rejectedMods: number;
+  rating: number;
+}
 export interface IUserProfile {
   _id: string;
   username: string;
   email: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   modsCount: number;
   reviewsCount: number;
   avatarUrl: string;

@@ -1,0 +1,38 @@
+.roulettePage {
+  padding: 2rem;
+  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+  color: #fff;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #bdc3c7;
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: #e74c3c;
+} 

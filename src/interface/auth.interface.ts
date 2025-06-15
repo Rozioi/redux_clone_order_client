@@ -1,3 +1,4 @@
+import { IAdmin } from '../context/AuthContext';
 import { IUser, IUserWithPermissions } from './user.interface';
 
 export interface IAuthResponse {
@@ -7,6 +8,7 @@ export interface IAuthResponse {
   email?: string;
   isAdmin?: boolean;
   message?: string;
+  admin?: IAdmin;
 }
 
 

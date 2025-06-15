@@ -26,7 +26,8 @@ const LeftSidebar: React.FC = () => {
                 console.error('Error:', err);
                 setCategories([
                     { _id: '1', name: 'ваши моды', parentId: null, order: 1, isActive: true },
-                    { _id: '2', name: 'отзывы', parentId: null, order: 2, isActive: true }
+                    { _id: '2', name: 'отзывы', parentId: null, order: 2, isActive: true },
+                    { _id: '3', name: 'рулетка', parentId: null, order: 3, isActive: true }
                 ]);
             } finally {
                 setLoading(false);
@@ -40,7 +41,8 @@ const LeftSidebar: React.FC = () => {
     
     const specialItems = [
         { _id: '1', name: 'ваши моды',url:'your-mods', parentId: null },
-        { _id: '2', name: 'отзывы',url: 'reviews', parentId: null }
+        { _id: '2', name: 'отзывы',url: 'reviews', parentId: null },
+        { _id: '3', name: 'рулетка',url: 'roulette', parentId: null }
     ];
 
     
@@ -96,5 +98,4 @@ const LeftSidebar: React.FC = () => {
         </div>
     );
 };
-
 export default LeftSidebar;

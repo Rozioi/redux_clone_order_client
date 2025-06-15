@@ -26,7 +26,9 @@ export interface ICategoryWithModerators extends Omit<ICategory, 'moderators'> {
 
 export interface ICategoryCreate {
   name: string;
-  description?: string;
+  parentId?: string;
+  order: number;
+  isActive: boolean;
 }
 
 export interface ICategoryUpdate {

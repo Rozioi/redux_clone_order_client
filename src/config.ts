@@ -26,7 +26,6 @@ export default config;
 
 export const ROLES = {
   ADMIN: 'admin',
-  MODERATOR: 'moderator',
   USER: 'user'
 } as const;
 

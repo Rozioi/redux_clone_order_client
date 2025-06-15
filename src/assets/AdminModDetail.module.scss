@@ -1,3 +1,4 @@
+@use 'Animation.scss' as *;
 .modDetail {
   padding: 2rem;
   max-width: 1200px;
@@ -172,3 +173,50 @@
   text-align: center;
   border: 1px solid #3d2525;
 } 
+
+
+
+.modal-content {
+  width: 380px;
+  max-width: 90%;
+  background: rgba(30, 30, 30, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  color:white;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 68, 68, 0.1); 
+  transform: translateY(20px);
+  @include slideUp;
+   
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h2 {
+      color: #fff;
+      font-size: 1.2rem;
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  .closeButtonStyles {
+    background: none;
+    border: none;
+    color: rgba(255, 112, 158, 0.5);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+cursor: pointer;
+    &:hover {
+        color: rgba(255, 112, 158, 0.9);
+    }
+  }
+  
+}

@@ -1,0 +1,116 @@
+@import './darkTheme.scss';
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 2rem;
+  background-color: var(--dark-bg-primary);
+}
+
+.content {
+  background-color: var(--dark-bg-secondary);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px var(--dark-shadow);
+  max-width: 600px;
+  width: 100%;
+
+  h1 {
+    color: var(--dark-text-primary);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+}
+
+.warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+
+  h2 {
+    color: #ffc107;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+
+  p {
+    color: var(--dark-text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      color: var(--dark-text-secondary);
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+      position: relative;
+
+      &:before {
+        content: "•";
+        color: #ffc107;
+        position: absolute;
+        left: 0;
+      }
+    }
+  }
+}
+
+.error {
+  background-color: rgba(255, 77, 79, 0.1);
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+
+  p {
+    color: var(--dark-error);
+    margin: 0;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  button {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.deactivateButton {
+  background-color: var(--dark-error);
+  color: var(--dark-text-primary);
+
+  &:hover:not(:disabled) {
+    background-color: darken(#ff4d4f, 10%);
+  }
+}
+
+.cancelButton {
+  background-color: var(--dark-border);
+  color: var(--dark-text-primary);
+
+  &:hover:not(:disabled) {
+    background-color: darken(#404040, 10%);
+  }
+} 

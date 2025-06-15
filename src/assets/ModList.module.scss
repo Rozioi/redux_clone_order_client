@@ -248,9 +248,64 @@
 
 .modsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
 }
+
+:global {
+    .ant-carousel {
+        width: 100%;
+        margin: 20px 0;
+        
+        .slick-slide {
+            padding: 0 10px;
+        }
+        
+        .slick-dots {
+            bottom: -25px;
+            
+            li button {
+                background: #1890ff;
+                opacity: 0.4;
+            }
+            
+            li.slick-active button {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.advertisementWrapper {
+    width: 100%;
+    max-width: 360px;
+
+    :global(.ant-carousel) {
+        .slick-dots {
+            bottom: -25px;
+            
+            li button {
+                background: #666;
+                opacity: 0.4;
+            }
+            
+            li.slick-active button {
+                background: #fff;
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.advertisementSlide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
 /* 
 .modCard {
     background: rgba(26, 26, 26, 0.8);

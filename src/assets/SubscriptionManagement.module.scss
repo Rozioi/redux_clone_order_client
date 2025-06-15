@@ -1,0 +1,123 @@
+.container {
+  padding: 24px;
+  background-color: #1f1f1f;
+  min-height: 100vh;
+  color: #fff;
+
+  .addButton {
+    margin-bottom: 16px;
+    background-color: #1890ff;
+    border-color: #1890ff;
+    
+    &:hover {
+      background-color: #40a9ff;
+      border-color: #40a9ff;
+    }
+  }
+
+  .table {
+    background-color: #141414;
+    
+    :global {
+      .ant-table {
+        background-color: #141414;
+        color: #fff;
+      }
+
+      .ant-table-thead > tr > th {
+        background-color: #1f1f1f;
+        color: #fff;
+        border-bottom: 1px solid #303030;
+      }
+
+      .ant-table-tbody > tr > td {
+        background-color: #141414;
+        color: #fff;
+        border-bottom: 1px solid #303030;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background-color: #1f1f1f;
+      }
+    }
+  }
+
+  .actionButton {
+    background-color: transparent;
+    border-color: #1890ff;
+    color: #1890ff;
+
+    &:hover {
+      background-color: #1890ff;
+      color: #fff;
+    }
+  }
+
+  .modal {
+    :global {
+      .ant-modal-content {
+        background-color: #141414;
+        color: #fff;
+      }
+
+      .ant-modal-header {
+        background-color: #1f1f1f;
+        border-bottom: 1px solid #303030;
+      }
+
+      .ant-modal-title {
+        color: #fff;
+      }
+
+      .ant-modal-close {
+        color: #fff;
+      }
+    }
+  }
+
+  .form {
+    :global {
+      .ant-form-item-label > label {
+        color: #fff;
+      }
+
+      .ant-input,
+      .ant-input-number,
+      .ant-select-selector {
+        background-color: #1f1f1f !important;
+        border-color: #303030 !important;
+        color: #fff !important;
+      }
+
+      .ant-input-number-handler-wrap {
+        background-color: #1f1f1f;
+      }
+
+      .ant-select-selection-item {
+        color: #fff;
+      }
+
+      .ant-select-arrow {
+        color: #fff;
+      }
+
+      .ant-switch {
+        background-color: #1f1f1f;
+      }
+
+      .ant-switch-checked {
+        background-color: #1890ff;
+      }
+    }
+  }
+
+  .submitButton {
+    background-color: #1890ff;
+    border-color: #1890ff;
+    
+    &:hover {
+      background-color: #40a9ff;
+      border-color: #40a9ff;
+    }
+  }
+} 

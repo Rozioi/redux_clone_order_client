@@ -55,6 +55,7 @@ const AdminLogin: React.FC = () => {
         // Сохраняем токен и данные пользователя
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('admin', JSON.stringify(data.admin));
         
         // Проверяем, что токен действительно сохранился
         const savedToken = localStorage.getItem('token');

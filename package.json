@@ -10,11 +10,14 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.113",
+    "antd": "^5.26.0",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.18.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^4.10.1",
+    "react-markdown": "^10.1.0",
     "react-modal": "^3.16.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.27.0",
@@ -50,6 +53,8 @@
     ]
   },
   "devDependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "@types/antd": "^0.12.32",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2"
   }

@@ -7,6 +7,7 @@ import styles from '../../assets/ModList.module.scss';
 import ModCard from './ModCard';
 import { FaSearch, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import { ICategory } from '../../interface/category.interface';
+import { AdvertisementCarousel } from '../AdvertisementCarousel';
 
 const ModList: React.FC = () => {
   const [mods, setMods] = useState<IMod[]>([]);
@@ -29,7 +30,7 @@ const ModList: React.FC = () => {
         setLoading(true);
         setError(null);
         const [modsData, categoriesData] = await Promise.all([
-               ApiService.getMods(),
+               ApiService.getModsForUser(),
                ApiService.getCategories()
              ]);
              
@@ -46,6 +47,8 @@ const ModList: React.FC = () => {
     fetchMods();
   }, []);
   const filteredAndSortedMods = useMemo(() => {
+    if (!mods) return [];
+    
     let filtered = [...mods];
     if (categorySlug) {
       const category = categories.find(c => 
@@ -58,14 +61,12 @@ const ModList: React.FC = () => {
         );
   
         if (subcategorySlug) {
-        
           const subcategory = categories.find(c => 
             c.name.toLowerCase() === subcategorySlug.toLowerCase() && 
             c.parentId === category._id
           );
           
           if (subcategory) {
-  
             filtered = filtered.filter(mod =>
               mod.categories?.includes(subcategory._id || '')
             );
@@ -73,25 +74,25 @@ const ModList: React.FC = () => {
         }
       }
     }
-      if (searchQuery) {
-        filtered = filtered.filter(mod =>
-          mod.modName.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
+
+    if (searchQuery) {
+      filtered = filtered.filter(mod =>
+        mod.modName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
   
-     
-      return filtered.sort((a, b) => {
-        if (sortBy === 'date') {
-          return sortOrder === 'asc' 
-            ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-            : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        } else {
-          return sortOrder === 'asc'
-            ? (a.rating?.downloads || 0) - (b.rating?.downloads || 0)
-            : (b.rating?.downloads || 0) - (a.rating?.downloads || 0);
-        }
-      });
-    }, [mods, categories, categorySlug, subcategorySlug, searchQuery, sortBy, sortOrder]);
+    return filtered.sort((a, b) => {
+      if (sortBy === 'date') {
+        return sortOrder === 'asc' 
+          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      } else {
+        return sortOrder === 'asc'
+          ? (a.rating?.downloads || 0) - (b.rating?.downloads || 0)
+          : (b.rating?.downloads || 0) - (a.rating?.downloads || 0);
+      }
+    });
+  }, [mods, categories, categorySlug, subcategorySlug, searchQuery, sortBy, sortOrder]);
 
   
 
@@ -171,21 +172,25 @@ const ModList: React.FC = () => {
       </div>
 
       <div className={styles.modsGrid}>
-            {filteredAndSortedMods.length > 0 ? (
-              filteredAndSortedMods.map((mod) => (
+        {filteredAndSortedMods.length > 0 ? (
+          <>
+            {filteredAndSortedMods.map((mod, index) => (
+              <React.Fragment key={mod._id}>
                 <ModCard 
-                  key={mod._id} 
                   mod={mod} 
                   showVideo={showVideo} 
                   allCategories={categories}
                 />
-              ))
-            ) : (
-              <div className={styles.noResults}>
-                {categorySlug ? 'Нет модов в этой категории' : 'Моды не найдены'}
-              </div>
-            )}
+                {index % 3 === 2 && <AdvertisementCarousel />}
+              </React.Fragment>
+            ))}
+          </>
+        ) : (
+          <div className={styles.noResults}>
+            {categorySlug ? 'Нет модов в этой категории' : 'Моды не найдены'}
           </div>
+        )}
+      </div>
     </div>
   );
 };
